@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage>
         ),
         keyboardType: TextInputType.text,
         inputFormatters: <TextInputFormatter>[
-          WhitelistingTextInputFormatter(RegExp("[a-zA-Z]"))
+          WhitelistingTextInputFormatter(RegExp("[a-zA-Z\ ]"))
         ],
         controller: nameController,
       ),
@@ -124,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage>
         ),
         keyboardType: TextInputType.text,
         inputFormatters: <TextInputFormatter>[
-          WhitelistingTextInputFormatter(RegExp("[a-zA-Z]"))
+          WhitelistingTextInputFormatter(RegExp("[a-zA-Z\ \-]"))
         ],
         controller: surnameController,
       ),
