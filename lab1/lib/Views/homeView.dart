@@ -105,6 +105,10 @@ class _MyHomePageState extends State<MyHomePage>
           labelText: "name",
           helperText: oName,
         ),
+        keyboardType: TextInputType.text,
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter(RegExp("[a-zA-Z]"))
+        ],
         controller: nameController,
       ),
     );
@@ -118,6 +122,10 @@ class _MyHomePageState extends State<MyHomePage>
             labelText: "surname",
             helperText: oldSurname
         ),
+        keyboardType: TextInputType.text,
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter(RegExp("[a-zA-Z]"))
+        ],
         controller: surnameController,
       ),
     );
