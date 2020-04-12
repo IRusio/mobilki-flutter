@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lab2app/tools/helper.dart';
-import 'package:lab2app/tools/slidemenu.dart';
+import '../tools/helper.dart';
+import '../tools/slidemenu.dart';
 import 'view.detail.dart';
 
 //import 'package:sqfentity_sample/view/Update.dart';
