@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../tools/helper.dart';
+import '../../tools/helper.dart';
 
 class SQFViewDetail extends StatefulWidget {
   SQFViewDetail(this.data, this.formListTitleField, this.T,

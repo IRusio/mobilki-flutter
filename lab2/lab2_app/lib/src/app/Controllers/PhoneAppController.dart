@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:lab2app/src/app/Models/PhoneData.dart';
 import 'package:mvc_application/controller.dart';
 import 'package:mvc_application/view.dart';
 
-class HomeController extends AppController {
+class PhoneAppController extends AppController {
 
-  factory HomeController([StateMVC state]) {
-    _this ??= HomeController._(state);
+  factory PhoneAppController([StateMVC state]) {
+    _this ??= PhoneAppController._(state);
     return _this;
   }
 
-  static HomeController _this;
+  static PhoneAppController _this;
 
-  HomeController._([StateMVC state]) : super(state);
+  PhoneAppController._([StateMVC state]) : super(state);
 
   @override
   void initState() {
@@ -19,7 +20,8 @@ class HomeController extends AppController {
   }
 
   static AppView _state;
-
+  static PhoneData get phoneData => _phoneData;
+  static PhoneData _phoneData;
 
   static bool get debugShowGrid => _state?.debugShowMaterialGrid;
   static set debugShowGrid(bool v) {

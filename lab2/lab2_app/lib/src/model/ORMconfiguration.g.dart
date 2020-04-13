@@ -11,7 +11,7 @@ part of 'ORMconfiguration.dart';
 //  Apache license that can be found in the LICENSE file.
 
 //  To use these SqfEntity classes do following:
-//  - import model.dart into where to use
+//  - import src.model.dart into where to use
 //  - start typing ex:Phone.select()... (add a few filters with fluent methods)...(add orderBy/orderBydesc if you want)...
 //  - and then just put end of filters / or end of only select()  toSingle() / or toList()
 //  - you can select one or return List<yourObject> by your filters and orders
