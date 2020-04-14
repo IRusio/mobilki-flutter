@@ -1,16 +1,10 @@
-# lab2_2
+# lab2app
 
-A new Flutter application.
+application created for my mobile phone labs at the university
 
-## Getting Started
+used mvc pattern and sqfEntity, with using this external sources:
+- https://github.com/Andrious/weather/
+- https://medium.com/flutter-community/mvc-in-flutter-part-1-51d5eba081a3
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- https://medium.com/@hhtokpinar/sqfentity-orm-framework-for-flutter-1-creating-database-src.model-f80218d6ed4b
+- https://github.com/hhtokpinar/sqfEntity/b
