@@ -177,7 +177,8 @@ class _Widgets {
     _appBar.homeStrings();
     //there probably could be inject dependencies to this
   }
-  List<bool> isPress = new List<bool>();
+  var isPress = new List<bool>();
+  var phones = new List<Phone>();
   var isBuild = false;
 
   Widget get homePhonesTab {
@@ -185,17 +186,18 @@ class _Widgets {
     return new FutureBuilder(
       future: PhoneAppController.phoneData.allPhones,
       initialData: new List<Phone>(),
-      builder: (BuildContext context, AsyncSnapshot<List<Phone>> phones) {
+      builder: (BuildContext context, AsyncSnapshot<List<Phone>> _phones) {
 
+        phones = phones;
 
-        if(isBuild == false && phones.data != null && phones.data.length > isPress.length ) {
-          for(int i = isPress.length; i < phones.data.length ; i++){
+        if(isBuild == false && _phones.data != null && _phones.data.length > isPress.length ) {
+          for(int i = isPress.length; i < _phones.data.length ; i++){
             isPress.add(false);
           }
           isBuild = true;
         }
 
-        return con.buildPhoneTab(con.context, HomeViewTab.home, phones.data, isPress);
+        return con.buildPhoneTab(con.context, HomeViewTab.home, _phones.data, isPress);
       },
     );
   }
@@ -295,7 +297,7 @@ class _DeletePhonePanel{
         child: new ButtonBar(
           children: <Widget>[
             new RaisedButton(onPressed: () => cleanPressElement(con.widget.isPress), child: Text("revoke")),
-            new RaisedButton(onPressed: null, child: Text("delete"))
+            new RaisedButton(onPressed: () => deletePressedElements(con.widget.isPress), child: Text("delete"))
           ],
         )
     );
@@ -309,8 +311,17 @@ class _DeletePhonePanel{
   }
 
 
-  void deletePressedElements(List<bool> isPressed){
-
+  void deletePressedElements(List<bool> isPressed) async{
+    var indexes = getIndexOfPressedElements(isPressed);
+    var phones = await Phone().select().toList();
+    for (int i = indexes.length - 1; i != -1; i--)
+    {
+      var index = indexes[i];
+      phones[index].delete();
+      phones[index].save();
+    }
+    con.setState(() {});
+    cleanPressElement(isPressed);
   }
 
   List<int> getIndexOfPressedElements(List<bool> isPressed){
