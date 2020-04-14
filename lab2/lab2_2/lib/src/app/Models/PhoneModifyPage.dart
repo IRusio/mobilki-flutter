@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:lab2_2/model/ORMconfiguration.dart';
 import 'package:lab2_2/src/app/Controllers/PhoneAppController.dart';
 import 'package:lab2_2/src/app/Services/FieldsServices.dart';
+import 'package:lab2_2/src/app/Services/Validators/isDecimalValidator.dart';
 import 'package:lab2_2/src/controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -103,14 +104,20 @@ class _PhoneModifyPage extends State<PhoneModifyPage> {
 
   Future<PhoneObject> getPhone(int _id)
   async {
-    PhoneObject phone = await phoneData[_id];
+    PhoneObject phone;
+    if(_id == null) {
+      phone = new PhoneObject(new Phone());
+    }
+    else{
+      phone = await phoneData[_id];
+    }
+
     this.phoneObject = phone;
 
-
-    producerController.text = phone.phone.producer;
-    modelController.text = phone.phone.phoneModel;
-    androidVersionController.text = phone.phone.androidVersion.toString();
-    wwwPageController.text = phone.phone.phoneWebPage.toString();
+    producerController.text = phoneObject.phone.producer;
+    modelController.text = phoneObject.phone.phoneModel;
+    androidVersionController.text = phoneObject.phone.androidVersion != null? phoneObject.phone.androidVersion.toString() : 0;
+    wwwPageController.text = phoneObject.phone.phoneWebPage;
 
 
     return phone;
@@ -124,7 +131,7 @@ class _PhoneModifyPage extends State<PhoneModifyPage> {
             AsyncSnapshot<PhoneObject> phoneObject) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(phoneObject.data.phone == null?'${phoneObject.data.phone.producer} ${phoneObject.data.phone.phoneModel}': 'new Phone')
+            title: Text(phoneObject.data != null?'${phoneObject.data.phone.producer} ${phoneObject.data.phone.phoneModel}': 'new Phone')
           ),
           body: SingleChildScrollView(
             child: Container(
@@ -182,6 +189,9 @@ class _PhoneModifyPage extends State<PhoneModifyPage> {
         ),
         keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
         controller: androidVersionController,
+        inputFormatters: <TextInputFormatter>[
+          DecimalTextInputFormatter(decimalRange: 1)
+        ],
       ),
     );
   }

@@ -215,6 +215,7 @@ class _FloatingActionButton {
       backgroundColor: Theme.of(con.context).accentColor,
       onPressed: () {
         //TODO: implement content
+        Navigator.pushNamed(con.context, '/edit', arguments: null);
       },
     );
   }

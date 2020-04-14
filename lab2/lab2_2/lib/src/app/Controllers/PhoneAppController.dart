@@ -28,7 +28,6 @@ class PhoneAppController extends AppController {
   static PhoneModifyPage phoneModifyPage(int id) =>
       PhoneModifyPage(id, _phoneData);
 
-  //Todo kontroler do dodwania nowego telefonu, i edycji obecnego
 
   static bool get debugShowGrid => _state?.debugShowMaterialGrid;
   static set debugShowGrid(bool v) {

@@ -33,8 +33,7 @@ class PhoneApp extends AppView {
           return MaterialPageRoute<void>(
           settings: settings,
           builder: (BuildContext context) =>
-              con.PhoneAppController.phoneModifyPage(
-                  null), //TODO: undestood what is going on there
+              con.PhoneAppController.phoneModifyPage(settings.arguments), //TODO: undestood what is going on there
         );
         }
         break;
