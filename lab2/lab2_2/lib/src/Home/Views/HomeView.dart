@@ -27,6 +27,9 @@ class HomeViewState extends StateMVC<HomeView> {
       key: con.scaffoldKey,
       appBar: con.widget.appBar,
       floatingActionButton: con.widget.floatingButton.addNewPhone,
+      persistentFooterButtons: <Widget>[
+        con.widget.deletePhonePanel
+      ],
       drawer: Drawer(
         child: ListView(
           dragStartBehavior: DragStartBehavior.down,

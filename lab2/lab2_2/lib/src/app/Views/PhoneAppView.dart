@@ -17,7 +17,6 @@ class PhoneApp extends AppView {
     //i found info that is more like local settings TODO: remove that in final version
     supportedLocales: const <Locale> [
       Locale('en', 'US'),
-      Locale('es', 'ES'),
     ],
   );
 

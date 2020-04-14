@@ -81,7 +81,8 @@ class HomeController extends ControllerMVC {
   }
 
   Widget buildPhoneTab(
-      BuildContext context, HomeViewTab tab, List<Phone> phones) {
+      BuildContext context, HomeViewTab tab, List<Phone> phones, List<bool> isPress) {
+
     return AnimatedBuilder(
       key: ValueKey<HomeViewTab>(tab),
       animation: Listenable.merge(
@@ -90,22 +91,28 @@ class HomeController extends ControllerMVC {
         return _buildPhonesList(
             context,
             _filterBySearchQuery(phones),
+            isPress,
             tab);
       },
     );
   }
 
   Widget _buildPhonesList(
-      BuildContext context, Iterable<Phone> phones, HomeViewTab tab) {
+      BuildContext context, Iterable<Phone> phones, List<bool> isPressed, HomeViewTab tab) {
     return PhoneList(
       phones: phones.toList(),
-      //TODO: implement marking
-      onOpen: (Phone phone) {
+      isPress: isPressed,
+      onAction: (Phone phone, bool isPress, int index) {
+        setState(() {
+          isPressed[index] = !isPressed[index];
+        });
+        print(isPress);
+        },
+      onOpen: (Phone phone, bool isPress, int index) {
         Navigator.pushNamed(context, '/edit', arguments: phone.id);
       },
     );
   }
-
 
   Iterable<Phone> _filterBySearchQuery(Iterable<Phone> phones) {
     if(_searchQuery.text.isEmpty) return phones;
@@ -151,6 +158,7 @@ class _Widgets {
   _Drawer _drawer;
   _Body _body;
   _FloatingActionButton _floatingButton;
+  _DeletePhonePanel _deletePhonePanel;
 
   Widget get drawer => _drawer.drawer;
   Future<Widget> get body async => await _body.body;
@@ -160,24 +168,34 @@ class _Widgets {
   Widget get search => _appBar.search;
   Widget get popMenu => _appBar.popMenu;
   Widget get home => _appBar.home;
+  Widget get deletePhonePanel => _deletePhonePanel.deletePhonePanel;
   //There should be probably another components
 
   void didChangeDependencies() {
+    _deletePhonePanel = _DeletePhonePanel(con);
     _floatingButton = _FloatingActionButton(con);
     _appBar.homeStrings();
     //there probably could be inject dependencies to this
   }
-
+  List<bool> isPress = new List<bool>();
+  var isBuild = false;
 
   Widget get homePhonesTab {
-//    List<Phone> phones = PhoneAppController.phoneData.allPhones;
-//    con.buildPhoneTab(con.context, HomeViewTab.home, phones);
 
     return new FutureBuilder(
       future: PhoneAppController.phoneData.allPhones,
       initialData: new List<Phone>(),
       builder: (BuildContext context, AsyncSnapshot<List<Phone>> phones) {
-        return con.buildPhoneTab(con.context, HomeViewTab.home, phones.data);
+
+
+        if(isBuild == false && phones.data != null && phones.data.length > isPress.length ) {
+          for(int i = isPress.length; i < phones.data.length ; i++){
+            isPress.add(false);
+          }
+          isBuild = true;
+        }
+
+        return con.buildPhoneTab(con.context, HomeViewTab.home, phones.data, isPress);
       },
     );
   }
@@ -198,13 +216,12 @@ class _AppBar {
     IconButton search;
     Tab home;
     Text appBarTitle;
+    Widget _deletePhonePanel;
 
     void homeStrings() {
       home = Tab(text: "home");
       appBarTitle = Text("Phone dictionnary");
     }
-
-    //there is oportunity
 }
 
 class _FloatingActionButton {
@@ -214,7 +231,6 @@ class _FloatingActionButton {
       child: const Icon(Icons.add),
       backgroundColor: Theme.of(con.context).accentColor,
       onPressed: () {
-        //TODO: implement content
         Navigator.pushNamed(con.context, '/edit', arguments: null);
       },
     );
@@ -257,14 +273,55 @@ class _Drawer { //thats the left panel of the widget
 
 class _Body {
   _Body(this.con);
+
   HomeController con;
 
-  Future<Widget> get body async => TabBarView(
-    dragStartBehavior: DragStartBehavior.down,
-    children: <Widget>[
-      await con.widget.homePhonesTab,
-    ],
-  );
+  Future<Widget> get body async =>
+      TabBarView(
+        dragStartBehavior: DragStartBehavior.down,
+        children: <Widget>[
+          con.widget.homePhonesTab
+        ],
+      );
+}
+
+class _DeletePhonePanel{
+  _DeletePhonePanel(this.con);
+  HomeController con;
+
+  Widget get deletePhonePanel {
+    if(getIndexOfPressedElements(con.widget.isPress).length > 0)
+    return Container(
+        child: new ButtonBar(
+          children: <Widget>[
+            new RaisedButton(onPressed: () => cleanPressElement(con.widget.isPress), child: Text("revoke")),
+            new RaisedButton(onPressed: null, child: Text("delete"))
+          ],
+        )
+    );
+    else return null;
+  }
+
+  void cleanPressElement(List<bool> isPressed) {
+    for(int i = 0 ; i < isPressed.length ; i++){
+      con.setState(() {isPressed[i] = false; });
+    }
+  }
+
+
+  void deletePressedElements(List<bool> isPressed){
+
+  }
+
+  List<int> getIndexOfPressedElements(List<bool> isPressed){
+    List<int> pressedElementsId = new List<int>();
+
+    for(int i = 0 ; i < isPressed.length ; i++)
+      if (isPressed[i])
+        pressedElementsId.add(i);
+    return pressedElementsId;
+  }
+
 }
 
 final TextEditingController _searchQuery = TextEditingController();

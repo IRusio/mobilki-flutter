@@ -30,6 +30,7 @@ class PhoneData extends ChangeNotifier {
   }
 
   void add(Phone newPhone) {
+    Phone().select().delete();
     newPhone.save();
     notifyListeners();
   }
