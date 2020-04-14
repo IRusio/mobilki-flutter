@@ -73,7 +73,7 @@ class HomeController extends ControllerMVC {
         controller: _searchQuery,
         autofocus: true,
         decoration: const InputDecoration(
-          hintText: 'Search stocks',
+          hintText: 'Search phone models',
         ),
       ),
       backgroundColor: Theme.of(context).canvasColor,
@@ -99,7 +99,10 @@ class HomeController extends ControllerMVC {
       BuildContext context, Iterable<Phone> phones, HomeViewTab tab) {
     return PhoneList(
       phones: phones.toList(),
-
+      //TODO: implement marking
+      onOpen: (Phone phone) {
+        Navigator.pushNamed(context, '/edit', arguments: phone.id);
+      },
     );
   }
 
@@ -159,12 +162,12 @@ class _Widgets {
   Widget get home => _appBar.home;
   //There should be probably another components
 
-
   void didChangeDependencies() {
     _floatingButton = _FloatingActionButton(con);
     _appBar.homeStrings();
     //there probably could be inject dependencies to this
   }
+
 
   Widget get homePhonesTab {
 //    List<Phone> phones = PhoneAppController.phoneData.allPhones;
@@ -198,7 +201,7 @@ class _AppBar {
 
     void homeStrings() {
       home = Tab(text: "home");
-      appBarTitle = Text("tittle");
+      appBarTitle = Text("Phone dictionnary");
     }
 
     //there is oportunity

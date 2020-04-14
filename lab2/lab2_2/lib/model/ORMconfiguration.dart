@@ -19,7 +19,7 @@ const phone = SqfEntityTable(
     fields: [
         SqfEntityField('producer', DbType.text),
         SqfEntityField('phoneModel', DbType.text),
-        SqfEntityField('androidVersion', DbType.integer),
+        SqfEntityField('androidVersion', DbType.real),
         SqfEntityField('phoneWebPage', DbType.text)
     ]
 );

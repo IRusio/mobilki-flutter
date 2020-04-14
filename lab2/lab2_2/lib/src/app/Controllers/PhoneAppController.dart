@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lab2_2/src/app/Models/PhoneData.dart';
+import 'package:lab2_2/src/app/Models/PhoneModifyPage.dart';
 import 'package:mvc_application/controller.dart';
 import 'package:mvc_application/view.dart';
 
@@ -23,6 +24,11 @@ class PhoneAppController extends AppController {
   static AppView _state;
   static PhoneData get phoneData => _phoneData;
   static PhoneData _phoneData;
+
+  static PhoneModifyPage phoneModifyPage(int id) =>
+      PhoneModifyPage(id, _phoneData);
+
+  //Todo kontroler do dodwania nowego telefonu, i edycji obecnego
 
   static bool get debugShowGrid => _state?.debugShowMaterialGrid;
   static set debugShowGrid(bool v) {

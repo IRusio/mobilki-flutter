@@ -33,7 +33,7 @@ class TablePhone extends SqfEntityTableBase {
     fields = [
       SqfEntityFieldBase('producer', DbType.text),
       SqfEntityFieldBase('phoneModel', DbType.text),
-      SqfEntityFieldBase('androidVersion', DbType.integer),
+      SqfEntityFieldBase('androidVersion', DbType.real),
       SqfEntityFieldBase('phoneWebPage', DbType.text),
     ];
     super.init();
@@ -116,14 +116,14 @@ class Phone {
     if (o['producer'] != null) producer = o['producer'] as String;
     if (o['phoneModel'] != null) phoneModel = o['phoneModel'] as String;
     if (o['androidVersion'] != null)
-      androidVersion = int.tryParse(o['androidVersion'].toString());
+      androidVersion = double.tryParse(o['androidVersion'].toString());
     if (o['phoneWebPage'] != null) phoneWebPage = o['phoneWebPage'] as String;
   }
   // FIELDS (Phone)
   int id;
   String producer;
   String phoneModel;
-  int androidVersion;
+  double androidVersion;
   String phoneWebPage;
 
   BoolResult saveResult;
@@ -783,7 +783,7 @@ class PhoneFilterBuilder extends SearchCriteria {
   PhoneField _androidVersion;
   PhoneField get androidVersion {
     return _androidVersion =
-        setField(_androidVersion, 'androidVersion', DbType.integer);
+        setField(_androidVersion, 'androidVersion', DbType.real);
   }
 
   PhoneField _phoneWebPage;
@@ -1134,7 +1134,7 @@ class PhoneFields {
   static TableField _fAndroidVersion;
   static TableField get androidVersion {
     return _fAndroidVersion = _fAndroidVersion ??
-        SqlSyntax.setField(_fAndroidVersion, 'androidVersion', DbType.integer);
+        SqlSyntax.setField(_fAndroidVersion, 'androidVersion', DbType.real);
   }
 
   static TableField _fPhoneWebPage;

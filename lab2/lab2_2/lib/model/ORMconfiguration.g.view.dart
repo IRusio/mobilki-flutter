@@ -95,7 +95,7 @@ class PhoneAddState extends State {
   Widget buildRowAndroidVersion() {
     return TextFormField(
       validator: (value) {
-        if (value.isNotEmpty && int.tryParse(value) == null) {
+        if (value.isNotEmpty && double.tryParse(value) == null) {
           return 'Please Enter valid number';
         }
 
@@ -131,7 +131,7 @@ class PhoneAddState extends State {
     phones
       ..producer = txtProducer.text
       ..phoneModel = txtPhoneModel.text
-      ..androidVersion = int.tryParse(txtAndroidVersion.text)
+      ..androidVersion = double.tryParse(txtAndroidVersion.text)
       ..phoneWebPage = txtPhoneWebPage.text;
     final result = await phones.save();
     if (result != 0) {

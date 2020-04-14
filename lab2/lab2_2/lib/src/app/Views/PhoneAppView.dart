@@ -23,18 +23,32 @@ class PhoneApp extends AppView {
 
   onRoutes() => <String, WidgetBuilder> { //thats a static routes i think?
     '/': (BuildContext context) => HomeView(),
-//    "/add": (BuildContext context) => AddPhone(),
-//    "/edit": (BuildContext context) => EditPhone(),
   };
 
-//  onOnGenerateRoute() => (RouteSettings settings) {
-//    if (settings.name == '/test') { //i think this will add new content without reloading page, or sth?
-//      final String symbol = settings.arguments;
-//      return MaterialPageRoute<void>(
-//        settings: settings,
-//        builder: (BuildContext context) => con.HomeController.symbolPage(symbol: symbol), TODO: undestood what is going on there
-//      );
-//    }
-//    return null;
-//  }
+  onOnGenerateRoute() => (RouteSettings settings) {
+    switch (settings.name)
+    {
+      case "/add":
+        {
+          return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (BuildContext context) =>
+              con.PhoneAppController.phoneModifyPage(
+                  null), //TODO: undestood what is going on there
+        );
+        }
+        break;
+      case "/edit":
+        {
+          return MaterialPageRoute<void>(
+            settings: settings,
+            builder: (BuildContext context) =>
+                con.PhoneAppController.phoneModifyPage(settings.arguments)
+          );
+        }
+        break;
+      default:
+        return null;
+    }
+  };
 }
