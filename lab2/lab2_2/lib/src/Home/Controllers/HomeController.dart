@@ -194,8 +194,11 @@ class _Widgets {
             isPress.add(false);
           }
         }
-
-        return con.buildPhoneTab(con.context, HomeViewTab.home, _phones.data, isPress);
+        var returningComponent = _phones.data.length == 0? new Container(
+          child: new Text("database is empty",textAlign: TextAlign.center ,),
+        ):
+        con.buildPhoneTab(con.context, HomeViewTab.home, _phones.data, isPress);
+        return returningComponent;
       },
     );
   }
