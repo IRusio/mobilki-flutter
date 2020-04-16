@@ -179,7 +179,6 @@ class _Widgets {
   }
   var isPress = new List<bool>();
   var phones = new List<Phone>();
-  var isBuild = false;
 
   Widget get homePhonesTab {
 
@@ -190,11 +189,10 @@ class _Widgets {
 
         phones = phones;
 
-        if(isBuild == false && _phones.data != null && _phones.data.length > isPress.length ) {
+        if(_phones.data != null && _phones.data.length > isPress.length ) {
           for(int i = isPress.length; i < _phones.data.length ; i++){
             isPress.add(false);
           }
-          isBuild = true;
         }
 
         return con.buildPhoneTab(con.context, HomeViewTab.home, _phones.data, isPress);
@@ -222,7 +220,7 @@ class _AppBar {
 
     void homeStrings() {
       home = Tab(text: "home");
-      appBarTitle = Text("Phone dictionnary");
+      appBarTitle = Text("Phone dictionary");
     }
 }
 
