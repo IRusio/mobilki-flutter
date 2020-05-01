@@ -22,7 +22,7 @@ class SliderPanelState extends State<SliderPanelWidget> {
         Container(
           child: new Column(
             children: <Widget>[
-              Icon(CupertinoIcons.circle_filled),
+              Icon(CupertinoIcons.circle_filled, color: widget.pickedColor,),
               Expanded(
                 child: RotatedBox(
                   child: CupertinoSlider(
@@ -37,7 +37,7 @@ class SliderPanelState extends State<SliderPanelWidget> {
                   }), quarterTurns: 3,
                 ),
               ),
-              Icon(CupertinoIcons.circle)
+              Icon(CupertinoIcons.circle, color: widget.pickedColor,)
             ],
           ),
           width: 50,
