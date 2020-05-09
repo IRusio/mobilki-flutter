@@ -5,18 +5,20 @@ import 'ToolbarWidget.dart';
 
 class DisposablePanelWidget extends StatefulWidget {
 
-  bool isPressed;
+  bool isPaintScreenPressed;
   double strokeWidth;
   Function changeStatus;
   Function cleanCanvas;
   Color pickedColor;
+  Orientation orientation;
   DisposablePanelWidget(
       {Key key,
-        this.isPressed,
+        this.isPaintScreenPressed,
         this.strokeWidth,
         this.changeStatus,
         this.pickedColor,
-        this.cleanCanvas}) : super(key: key);
+        this.cleanCanvas,
+        this.orientation}) : super(key: key);
   DisposablePanelState createState() => DisposablePanelState();
 }
 
@@ -26,12 +28,13 @@ class DisposablePanelState extends State<DisposablePanelWidget>{
   final GlobalKey<ToolbarPanelState> _toolbarPanelKey = GlobalKey();
 
   void updateIsPressed(bool status) => this.setState(() {
-    this.widget.isPressed = status;
+    this.widget.isPaintScreenPressed = status;
   });
 
   void changeStatus(){
     this.widget.strokeWidth = this._sliderPanelKey.currentState.widget.strokeWidth;
     this.widget.pickedColor = this._toolbarPanelKey.currentState.widget.pickedColor;
+    this.widget.orientation = this._sliderPanelKey.currentState.widget.orientation;
     this.widget.changeStatus();
   }
 
@@ -42,7 +45,7 @@ class DisposablePanelState extends State<DisposablePanelWidget>{
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
 
-    return widget.isPressed? Container(): Container(
+    return widget.isPaintScreenPressed? Container(): Container(
         height: height,
         width:  width,
         child: Column(
@@ -52,12 +55,14 @@ class DisposablePanelState extends State<DisposablePanelWidget>{
               pickedColor: widget.pickedColor,
               strokeWidth: widget.strokeWidth,
               changeStatus: changeStatus,
+              orientation: widget.orientation
             ),
             ToolbarPanelWidget(
               key: _toolbarPanelKey,
               changeStatus: changeStatus,
               cleanCanvas: widget.cleanCanvas,
               pickedColor: widget.pickedColor,
+              orientation: widget.orientation,
             )
           ],
         )
