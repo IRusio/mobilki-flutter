@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 
 import 'TaskInfo.dart';
@@ -48,8 +49,11 @@ class DownloadFileService{
   }
 
   void requestDownload(TaskInfo task) async {
-
-
+    var status = await Permission.storage.status;
+    if(status.isDenied || status.isUndetermined)
+    {
+      Permission.storage.request();
+    }
     task.taskId = await FlutterDownloader.enqueue(
         url: task.link,
         savedDir: _localPath,
