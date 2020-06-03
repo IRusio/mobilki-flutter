@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:lab4/DownloadFile.dart';
+import 'package:lab4/DownloadFileService.dart';
+import 'package:lab4/TaskInfo.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,8 +10,6 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
-
+  DownloadFileService downloadFileService = new DownloadFileService();
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -57,7 +56,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               OutlineButton(
                   child: Text("Download"),
-                  onPressed: () {},
+                  onPressed: () {
+                    widget.downloadFileService.requestDownload(new TaskInfo(name: "xD", link: "https://yuml.me/ab1ef363.png"));
+                  },
                   borderSide: BorderSide(color: Colors.blueAccent),
                   shape: StadiumBorder(),
                   textColor: Colors.blueAccent,
@@ -67,7 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   focusColor: Colors.blueAccent,
                   hoverColor: Colors.blueAccent
               )
-
             ],
           ),
         )
