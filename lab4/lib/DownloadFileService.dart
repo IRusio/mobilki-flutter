@@ -11,7 +11,7 @@ import 'TaskInfo.dart';
 import 'main.dart';
 
 class DownloadFileService{
-  List<TaskInfo> _tasks;
+  List<TaskInfo> tasks = new List<TaskInfo>();
   String _localPath;
   ReceivePort _port = new ReceivePort();
 
@@ -30,7 +30,7 @@ class DownloadFileService{
       DownloadTaskStatus status = data[1];
       int progress = data[2];
 
-      final task = _tasks?.firstWhere((task) => task.taskId == id);
+      final task = tasks?.firstWhere((task) => task.taskId == id);
 
       if(task != null){
        task.status = status;
@@ -60,6 +60,7 @@ class DownloadFileService{
         showNotification: true,
         openFileFromNotification: true
     );
+    tasks.add(task);
   }
 
     void cancelDownload(TaskInfo task) async {

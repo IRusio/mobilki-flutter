@@ -57,7 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
               OutlineButton(
                   child: Text("Download"),
                   onPressed: () {
-                    widget.downloadFileService.requestDownload(new TaskInfo(name: "xD", link: "https://yuml.me/ab1ef363.png"));
+                      widget.downloadFileService.requestDownload(new TaskInfo(name: "xD", link: "https://yuml.me/ab1ef363.png"));
+                      setState((){});
                   },
                   borderSide: BorderSide(color: Colors.blueAccent),
                   shape: StadiumBorder(),
@@ -67,10 +68,31 @@ class _MyHomePageState extends State<MyHomePage> {
                   highlightColor: Colors.lightBlue,
                   focusColor: Colors.blueAccent,
                   hoverColor: Colors.blueAccent
-              )
+              ),
+              buildDownloadsTab(widget.downloadFileService.tasks),
             ],
           ),
         )
+    );
+  }
+
+  Widget buildDownloadsTab(List<TaskInfo> tasks){
+    return Expanded(
+      child: tasks.length > 0? ListView.builder(
+          itemCount: widget.downloadFileService.tasks.length,
+            itemBuilder: (BuildContext context, int index){
+              return TaskObject(tasks[index]);
+            }
+        ): Text("there is no download History")
+    );
+  }
+  Widget TaskObject(TaskInfo task){
+    return Builder(
+      builder: (BuildContext context) {
+        return Container(
+          child: Text(task.link),
+        );
+      },
     );
   }
 }
