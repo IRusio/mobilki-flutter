@@ -49,11 +49,10 @@ class DownloadFileService{
 
   void requestDownload(TaskInfo task) async {
 
-    var dirr = await getExternalStorageDirectory();
-    var dir = dirr.path;
+
     task.taskId = await FlutterDownloader.enqueue(
         url: task.link,
-        savedDir: dir,
+        savedDir: _localPath,
         showNotification: true,
         openFileFromNotification: true
     );
