@@ -11,11 +11,12 @@ import 'TaskInfo.dart';
 import 'main.dart';
 
 class DownloadFileService{
-  List<TaskInfo> tasks = new List<TaskInfo>();
+  List<TaskInfo> tasks;
   String _localPath;
   ReceivePort _port = new ReceivePort();
 
   DownloadFileService(){
+    tasks = [];
     configLocalPath();
   }
   void bindBackgroundIsolate()
@@ -24,6 +25,7 @@ class DownloadFileService{
     if(!isSuccess){
       unbindBackgroundIsolate();
       bindBackgroundIsolate();
+      return;
     }
     _port.listen((dynamic data) {
       String id = data[0];
@@ -31,7 +33,6 @@ class DownloadFileService{
       int progress = data[2];
 
       final task = tasks?.firstWhere((task) => task.taskId == id);
-
       if(task != null){
        task.status = status;
        task.progress = progress;
@@ -49,6 +50,7 @@ class DownloadFileService{
   }
 
   void requestDownload(TaskInfo task) async {
+
     var status = await Permission.storage.status;
     if(status.isDenied || status.isUndetermined)
     {
@@ -87,6 +89,7 @@ class DownloadFileService{
 
     void delete(TaskInfo task) async {
       await FlutterDownloader.remove(taskId: task.taskId, shouldDeleteContent: true);
+      tasks.remove(task);
     }
 
 

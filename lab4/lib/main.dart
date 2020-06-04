@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
+import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:lab4/DownloadFileService.dart';
 import 'package:lab4/TaskInfo.dart';
 
@@ -23,14 +27,38 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title}) : super(key: key) {
+    downloadFileService = new DownloadFileService();
+  }
   final String title;
-  DownloadFileService downloadFileService = new DownloadFileService();
+  DownloadFileService downloadFileService;
+  Timer _timer;
+
+
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyHomePageState createState() {
+
+    return _MyHomePageState();
+  }
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final linkController = TextEditingController();
+
+  void startTimer() {
+    const halfOfSecond = const Duration( milliseconds: 500);
+    widget._timer = new Timer.periodic(halfOfSecond, (timer) => setState((){
+    }));
+  }
+
+  @override
+  void initState() {
+    startTimer();
+    FlutterDownloader.registerCallback(DownloadFileService.downloadCallback);
+    widget.downloadFileService.bindBackgroundIsolate();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,15 +79,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     helperText: "Insert Link To Download Page",
                   ),
                   keyboardType: TextInputType.text,
+                  controller: linkController,
 
                 ),
               ),
               OutlineButton(
                   child: Text("Download"),
-                  onPressed: () {
-                      widget.downloadFileService.requestDownload(new TaskInfo(name: "xD", link: "https://yuml.me/ab1ef363.png"));
-                      setState((){});
-                  },
+                  onPressed: linkController.text.length != 0?() {
+                    var name = linkController.text.split('/');
+//                    var task = new TaskInfo(name: "xD", link: "https://yuml.me/ab1ef363.png");
+                    var task = new TaskInfo(name: name[name.length-1], link: linkController.text);
+                    setState(() {
+                      widget.downloadFileService.requestDownload(task);
+                      widget.downloadFileService.bindBackgroundIsolate();
+                    });
+
+                  }: (){},
                   borderSide: BorderSide(color: Colors.blueAccent),
                   shape: StadiumBorder(),
                   textColor: Colors.blueAccent,
@@ -69,28 +104,120 @@ class _MyHomePageState extends State<MyHomePage> {
                   focusColor: Colors.blueAccent,
                   hoverColor: Colors.blueAccent
               ),
-              buildDownloadsTab(widget.downloadFileService.tasks),
+              BuildDownloadsTab(widget.downloadFileService.tasks),
             ],
           ),
         )
     );
   }
 
-  Widget buildDownloadsTab(List<TaskInfo> tasks){
+  Widget BuildDownloadsTab(List<TaskInfo> tasks){
     return Expanded(
       child: tasks.length > 0? ListView.builder(
-          itemCount: widget.downloadFileService.tasks.length,
+          itemCount: tasks.length,
             itemBuilder: (BuildContext context, int index){
               return TaskObject(tasks[index]);
             }
         ): Text("there is no download History")
     );
   }
+
   Widget TaskObject(TaskInfo task){
+    RoundedProgressBarTheme theme;
+
+    switch(task.status) {
+      case DownloadTaskStatus.complete:
+        {
+          theme = RoundedProgressBarTheme.green;
+        } break;
+      case DownloadTaskStatus.running:
+        {
+          theme = RoundedProgressBarTheme.yellow;
+        } break;
+      case DownloadTaskStatus.failed:
+        {
+          theme = RoundedProgressBarTheme.midnight;
+        } break;
+      case DownloadTaskStatus.paused:
+        {
+          theme = RoundedProgressBarTheme.blue;
+        } break;
+      case DownloadTaskStatus.canceled:
+        {
+          theme = RoundedProgressBarTheme.red;
+        } break;
+      default:
+        {
+          theme = RoundedProgressBarTheme.purple;
+        }
+    }
+
+    FlutterDownloader.open(taskId: null)
+    //var file = File()
+
     return Builder(
       builder: (BuildContext context) {
-        return Container(
-          child: Text(task.link),
+        return Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Text(task.name),
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+
+              ),
+            Column(
+              children: <Widget>[
+                RoundedProgressBar(
+                    childCenter: Text("${task.progress}%",
+                        style: TextStyle(color: Colors.white)),
+                    percent: task.progress>=0? task.progress * 1.0: 0,
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    theme: theme
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    task.status == DownloadTaskStatus.failed?IconButton(
+                      icon: Icon(Icons.refresh),
+                      onPressed: () {
+                        widget.downloadFileService.retryDownload(task);
+                      },
+                    ): Container(),
+                    task.status == DownloadTaskStatus.paused?IconButton(
+                      icon: Icon(Icons.play_arrow),
+                      onPressed: () {
+                        widget.downloadFileService.resumeDownload(task);
+                      },
+                    ): Container(),
+                    task.status == DownloadTaskStatus.running?IconButton(
+                      icon: Icon(Icons.pause),
+                      onPressed: () {
+                        widget.downloadFileService.pauseDownload(task);
+                      },
+                    ): Container(),
+                    task.status == DownloadTaskStatus.complete?IconButton(
+                      icon: Icon(Icons.insert_drive_file),
+                      onPressed: () {
+                        widget.downloadFileService.openDownloadedFile(task);
+                      },
+                    ): Container(),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        widget.downloadFileService.delete(task);
+                      },
+                    ),
+
+
+                  ],
+                ),
+                Divider(
+                  color: Colors.black,
+                )
+              ],
+            )
+          ],
         );
       },
     );
