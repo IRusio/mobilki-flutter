@@ -5,12 +5,14 @@ class ToolbarPanelWidget extends StatefulWidget {
   Color pickedColor;
   Function cleanCanvas;
   Function changeStatus;
+  Orientation orientation;
 
   ToolbarPanelWidget(
       {Key key,
         this.pickedColor,
         this.cleanCanvas,
-        this.changeStatus
+        this.changeStatus,
+        this.orientation
       }) : super(key: key);
 
   @override
@@ -53,13 +55,13 @@ class ToolbarPanelState extends State<ToolbarPanelWidget> {
       height: 80,
       decoration: BoxDecoration(
           color: Colors.white70,
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(9.0),
           border: Border.all(
               color: Colors.blueGrey,
               width: 2
           )
       ),
-      margin: EdgeInsets.symmetric(vertical: 70.0),
+      margin: widget.orientation != Orientation.landscape? EdgeInsets.symmetric(vertical: 70.0) : EdgeInsets.symmetric(vertical: 0),
       child: Row(
         children: <Widget>[
           Expanded(

@@ -5,9 +5,9 @@ class SliderPanelWidget extends StatefulWidget {
   Color pickedColor;
   double strokeWidth;
   Function changeStatus;
+  Orientation orientation;
 
-
-  SliderPanelWidget({Key key, this.pickedColor, this.strokeWidth, this.changeStatus}) : super(key: key);
+  SliderPanelWidget({Key key, this.pickedColor, this.strokeWidth, this.changeStatus, this.orientation}) : super(key: key);
 
   @override
   SliderPanelState createState() => SliderPanelState();
@@ -51,7 +51,8 @@ class SliderPanelState extends State<SliderPanelWidget> {
               )
           ),
           alignment: Alignment.centerRight,
-          margin: EdgeInsets.fromLTRB(350, 150, 0, 0),
+          margin: widget.orientation == Orientation.portrait? EdgeInsets.fromLTRB(350, 150, 0, 0) : EdgeInsets.fromLTRB(600, 30, 0, 0)
+          ,
         ),
       ],
     );

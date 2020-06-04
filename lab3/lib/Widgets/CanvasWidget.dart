@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lab3/Models/DrawingArea.dart';
 
 class CanvasPanel extends StatefulWidget {
@@ -30,12 +31,15 @@ class CanvasPanelState extends State<CanvasPanel> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
-
 
     return Center(
       child: Container(

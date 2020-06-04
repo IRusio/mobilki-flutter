@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'Widgets/CanvasWidget.dart';
 import 'Widgets/DisposablePanelWidget.dart';
 
+import 'package:flutter/services.dart';
+
 void main() {
   runApp(
     MaterialApp(
@@ -21,6 +23,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Paint',
       theme: ThemeData(
@@ -39,7 +42,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Color pickedColor;
   double strokeWidth;
-  bool isPressed;
+  bool isPaintScreenPressed;
   final GlobalKey<DisposablePanelState> _disposablePanelKey = GlobalKey();
   final GlobalKey<CanvasPanelState> _canvasPanelKey = GlobalKey();
 
@@ -48,15 +51,15 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     pickedColor = Colors.black;
     strokeWidth = 2.0;
-    isPressed = false;
+    isPaintScreenPressed = false;
   }
 
 
   void changeStatus(){
-    isPressed = _canvasPanelKey.currentState.widget.isPressed;
+    isPaintScreenPressed = _canvasPanelKey.currentState.widget.isPressed;
     strokeWidth = _disposablePanelKey.currentState.widget.strokeWidth;
     pickedColor = _disposablePanelKey.currentState.widget.pickedColor;
-    _disposablePanelKey.currentState.updateIsPressed(isPressed);
+    _disposablePanelKey.currentState.updateIsPressed(isPaintScreenPressed);
     _canvasPanelKey.currentState.changeStatus(strokeWidth, pickedColor);
   }
 
@@ -66,6 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Widget _child;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,17 +79,27 @@ class _MyHomePageState extends State<MyHomePage> {
           CanvasPanel(
           key: _canvasPanelKey,
           changeStatus: changeStatus,
-            isPressed: isPressed,
+            isPressed: isPaintScreenPressed,
             pickedColor: Colors.black,
             strokeWidth: strokeWidth,
           ),
-          DisposablePanelWidget(
-              key: _disposablePanelKey,
-              isPressed: this.isPressed,
-              strokeWidth: strokeWidth,
-              changeStatus: this.changeStatus,
-              pickedColor: this.pickedColor,
-              cleanCanvas: cleanCanvas,
+          OrientationBuilder(
+            builder: (_, orientation){
+                _child = DisposablePanelWidget(
+                  key: _disposablePanelKey,
+                  isPaintScreenPressed: this.isPaintScreenPressed,
+                  strokeWidth: strokeWidth,
+                  changeStatus: this.changeStatus,
+                  pickedColor: this.pickedColor,
+                  cleanCanvas: cleanCanvas,
+                  orientation: orientation
+                );
+
+              return AnimatedSwitcher(
+                duration: Duration(seconds: 2),
+                child: _child,
+              );
+            },
           )
         ],
       ),
