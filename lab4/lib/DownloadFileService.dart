@@ -3,6 +3,7 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -36,6 +37,17 @@ class DownloadFileService{
       if(task != null){
        task.status = status;
        task.progress = progress;
+       task.theme = task.status == DownloadTaskStatus.complete?
+       RoundedProgressBarTheme.green:
+       task.status == DownloadTaskStatus.running?
+       RoundedProgressBarTheme.yellow:
+       task.status ==  DownloadTaskStatus.failed?
+       RoundedProgressBarTheme.midnight:
+       task.status ==  DownloadTaskStatus.paused?
+       RoundedProgressBarTheme.blue:
+       task.status ==  DownloadTaskStatus.canceled?
+       RoundedProgressBarTheme.red:
+       RoundedProgressBarTheme.purple;
       }
     });
   }
@@ -90,6 +102,17 @@ class DownloadFileService{
     void delete(TaskInfo task) async {
       await FlutterDownloader.remove(taskId: task.taskId, shouldDeleteContent: true);
       tasks.remove(task);
+    }
+
+    void remove(TaskInfo task) {
+    FlutterDownloader.cancel(taskId: task.taskId);
+      tasks.remove(task);
+    }
+
+    void deleteAll() async {
+      var data = await FlutterDownloader.loadTasks();
+      data.forEach((task) {FlutterDownloader.remove(taskId: task.taskId); });
+      tasks.clear();
     }
 
 

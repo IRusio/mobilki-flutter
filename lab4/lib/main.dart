@@ -30,15 +30,17 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key) {
     downloadFileService = new DownloadFileService();
+    downloadFileService.bindBackgroundIsolate();
+
   }
   final String title;
   DownloadFileService downloadFileService;
   Timer _timer;
-
-
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  new GlobalKey<RefreshIndicatorState>();
   @override
   _MyHomePageState createState() {
-
+    FlutterDownloader.registerCallback(DownloadFileService.downloadCallback);
     return _MyHomePageState();
   }
 }
@@ -49,13 +51,28 @@ class _MyHomePageState extends State<MyHomePage> {
   void startTimer() {
     const halfOfSecond = const Duration( milliseconds: 500);
     widget._timer = new Timer.periodic(halfOfSecond, (timer) => setState((){
+
+      widget.downloadFileService.tasks.forEach((task) {
+        if(task != null){
+          task.theme = task.status == DownloadTaskStatus.complete?
+          RoundedProgressBarTheme.green:
+          task.status == DownloadTaskStatus.running?
+          RoundedProgressBarTheme.yellow:
+          task.status ==  DownloadTaskStatus.failed?
+          RoundedProgressBarTheme.midnight:
+          task.status ==  DownloadTaskStatus.paused?
+          RoundedProgressBarTheme.blue:
+          task.status ==  DownloadTaskStatus.canceled?
+          RoundedProgressBarTheme.red:
+          RoundedProgressBarTheme.purple;
+        }
+      });
     }));
   }
 
   @override
   void initState() {
     startTimer();
-    FlutterDownloader.registerCallback(DownloadFileService.downloadCallback);
     widget.downloadFileService.bindBackgroundIsolate();
     super.initState();
   }
@@ -105,6 +122,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   focusColor: Colors.blueAccent,
                   hoverColor: Colors.blueAccent
               ),
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  widget.downloadFileService.deleteAll();
+                },
+              ),
               BuildDownloadsTab(widget.downloadFileService.tasks),
             ],
           ),
@@ -124,34 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget TaskObject(TaskInfo task){
-    RoundedProgressBarTheme theme;
 
-    switch(task.status) {
-      case DownloadTaskStatus.complete:
-        {
-          theme = RoundedProgressBarTheme.green;
-        } break;
-      case DownloadTaskStatus.running:
-        {
-          theme = RoundedProgressBarTheme.yellow;
-        } break;
-      case DownloadTaskStatus.failed:
-        {
-          theme = RoundedProgressBarTheme.midnight;
-        } break;
-      case DownloadTaskStatus.paused:
-        {
-          theme = RoundedProgressBarTheme.blue;
-        } break;
-      case DownloadTaskStatus.canceled:
-        {
-          theme = RoundedProgressBarTheme.red;
-        } break;
-      default:
-        {
-          theme = RoundedProgressBarTheme.purple;
-        }
-    }
 
     var file = File(widget.downloadFileService.localPath+"/"+task.name);
 
@@ -177,45 +173,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ,
                     percent: task.progress>=0? task.progress * 1.0: 0,
                     margin: EdgeInsets.symmetric(horizontal: 10),
-                    theme: theme
+                    theme: task.theme
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    task.status == DownloadTaskStatus.failed?IconButton(
-                      icon: Icon(Icons.refresh),
-                      onPressed: () {
-                        widget.downloadFileService.retryDownload(task);
-                      },
-                    ): Container(),
-                    task.status == DownloadTaskStatus.paused?IconButton(
-                      icon: Icon(Icons.play_arrow),
-                      onPressed: () {
-                        widget.downloadFileService.resumeDownload(task);
-                      },
-                    ): Container(),
-                    task.status == DownloadTaskStatus.running?IconButton(
-                      icon: Icon(Icons.pause),
-                      onPressed: () {
-                        widget.downloadFileService.pauseDownload(task);
-                      },
-                    ): Container(),
-                    task.status == DownloadTaskStatus.complete?IconButton(
-                      icon: Icon(Icons.insert_drive_file),
-                      onPressed: () {
-                        widget.downloadFileService.openDownloadedFile(task);
-                      },
-                    ): Container(),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        widget.downloadFileService.delete(task);
-                      },
-                    ),
-
-
-                  ],
-                ),
+                OptionsWidget(task),
                 Divider(
                   color: Colors.black,
                 )
@@ -224,6 +184,53 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         );
       },
+    );
+  }
+
+  Widget OptionsWidget(TaskInfo task)
+  {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        task.status == DownloadTaskStatus.failed?IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: () {
+            widget.downloadFileService.retryDownload(task);
+          },
+        ): Container(),
+        task.status == DownloadTaskStatus.paused?IconButton(
+          icon: Icon(Icons.play_arrow),
+          onPressed: () {
+            widget.downloadFileService.resumeDownload(task);
+          },
+        ): Container(),
+        task.status == DownloadTaskStatus.running?IconButton(
+          icon: Icon(Icons.pause),
+          onPressed: () {
+            widget.downloadFileService.pauseDownload(task);
+          },
+        ): Container(),
+        task.status == DownloadTaskStatus.complete?IconButton(
+          icon: Icon(Icons.insert_drive_file),
+          onPressed: () {
+            widget.downloadFileService.openDownloadedFile(task);
+          },
+        ): Container(),
+        IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () {
+            widget.downloadFileService.delete(task);
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.close),
+          onPressed: () {
+            widget.downloadFileService.remove(task);
+          },
+        ),
+
+
+      ],
     );
   }
 }
