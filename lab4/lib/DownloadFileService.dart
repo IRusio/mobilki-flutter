@@ -12,7 +12,7 @@ import 'main.dart';
 
 class DownloadFileService{
   List<TaskInfo> tasks;
-  String _localPath;
+  String localPath;
   ReceivePort _port = new ReceivePort();
 
   DownloadFileService(){
@@ -58,7 +58,7 @@ class DownloadFileService{
     }
     task.taskId = await FlutterDownloader.enqueue(
         url: task.link,
-        savedDir: _localPath,
+        savedDir: localPath,
         showNotification: true,
         openFileFromNotification: true
     );
@@ -99,9 +99,9 @@ class DownloadFileService{
   }
 
     void configLocalPath() async {
-      _localPath = (await _findLocalPath()) + Platform.pathSeparator + 'Download';
+      localPath = (await _findLocalPath()) + Platform.pathSeparator + 'Download';
 
-      final savedDir = Directory(_localPath);
+      final savedDir = Directory(localPath);
       bool hasExisted = await savedDir.exists();
       if (!hasExisted) {
         savedDir.create();

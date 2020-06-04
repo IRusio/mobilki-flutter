@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -152,8 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
         }
     }
 
-    FlutterDownloader.open(taskId: null)
-    //var file = File()
+    var file = File(widget.downloadFileService.localPath+"/"+task.name);
 
     return Builder(
       builder: (BuildContext context) {
@@ -169,8 +169,12 @@ class _MyHomePageState extends State<MyHomePage> {
             Column(
               children: <Widget>[
                 RoundedProgressBar(
-                    childCenter: Text("${task.progress}%",
-                        style: TextStyle(color: Colors.white)),
+                    childCenter: file.existsSync() == true?
+                    Text("${task.progress}% | ${(file.lengthSync()/(1024*1024)).round()}MB",
+                        style: TextStyle(color: Colors.white)):
+                    Text("${task.progress}% ",
+                        style: TextStyle(color: Colors.white))
+                    ,
                     percent: task.progress>=0? task.progress * 1.0: 0,
                     margin: EdgeInsets.symmetric(horizontal: 10),
                     theme: theme
