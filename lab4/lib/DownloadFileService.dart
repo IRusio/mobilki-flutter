@@ -37,19 +37,7 @@ class DownloadFileService{
       if(task != null){
        task.status = status;
        task.progress = progress;
-       task.theme = task.status == DownloadTaskStatus.complete?
-       RoundedProgressBarTheme.green:
-       task.status == DownloadTaskStatus.running?
-       RoundedProgressBarTheme.yellow:
-       task.status ==  DownloadTaskStatus.failed?
-       RoundedProgressBarTheme.midnight:
-       task.status ==  DownloadTaskStatus.paused?
-       RoundedProgressBarTheme.blue:
-       task.status ==  DownloadTaskStatus.canceled?
-       RoundedProgressBarTheme.red:
-       RoundedProgressBarTheme.purple;
-      }
-    });
+    }});
   }
 
   void unbindBackgroundIsolate(){

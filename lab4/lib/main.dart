@@ -52,28 +52,12 @@ class _MyHomePageState extends State<MyHomePage> {
     const halfOfSecond = const Duration( milliseconds: 500);
     widget._timer = new Timer.periodic(halfOfSecond, (timer) => setState((){
 
-      widget.downloadFileService.tasks.forEach((task) {
-        if(task != null){
-          task.theme = task.status == DownloadTaskStatus.complete?
-          RoundedProgressBarTheme.green:
-          task.status == DownloadTaskStatus.running?
-          RoundedProgressBarTheme.yellow:
-          task.status ==  DownloadTaskStatus.failed?
-          RoundedProgressBarTheme.midnight:
-          task.status ==  DownloadTaskStatus.paused?
-          RoundedProgressBarTheme.blue:
-          task.status ==  DownloadTaskStatus.canceled?
-          RoundedProgressBarTheme.red:
-          RoundedProgressBarTheme.purple;
-        }
-      });
     }));
   }
 
   @override
   void initState() {
     startTimer();
-    widget.downloadFileService.bindBackgroundIsolate();
     super.initState();
   }
 
@@ -105,7 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text("Download"),
                   onPressed: linkController.text.length != 0?() {
                     var name = linkController.text.split('/');
-//                    var task = new TaskInfo(name: "xD", link: "https://yuml.me/ab1ef363.png");
                     var task = new TaskInfo(name: name[name.length-1], link: linkController.text);
                     setState(() {
                       widget.downloadFileService.requestDownload(task);
@@ -138,6 +121,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget BuildDownloadsTab(List<TaskInfo> tasks){
     return Expanded(
       child: tasks.length > 0? ListView.builder(
+          addAutomaticKeepAlives: true,
+          physics: BouncingScrollPhysics(),
           itemCount: tasks.length,
             itemBuilder: (BuildContext context, int index){
               return TaskObject(tasks[index]);
@@ -147,8 +132,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget TaskObject(TaskInfo task){
-
-
     var file = File(widget.downloadFileService.localPath+"/"+task.name);
 
     return Builder(
@@ -173,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ,
                     percent: task.progress>=0? task.progress * 1.0: 0,
                     margin: EdgeInsets.symmetric(horizontal: 10),
-                    theme: task.theme
+                    theme: RoundedProgressBarTheme.blue
                 ),
                 OptionsWidget(task),
                 Divider(

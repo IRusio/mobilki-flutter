@@ -8,6 +8,5 @@ class TaskInfo {
   String taskId;
   int progress = 0;
   DownloadTaskStatus status = DownloadTaskStatus.undefined;
-  RoundedProgressBarTheme theme = RoundedProgressBarTheme.purple;
   TaskInfo({this.name, this.link});
 }
